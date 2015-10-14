@@ -101,6 +101,9 @@ def get_n_store(path):
 def set_background_linux(path_to_img):
     print("This is where the linux commands would go.")
 
+def set_background_raspi(path_to_img):
+    print("This is where the raspi commands would go.")
+
 def set_background_windows(path_to_img):
     ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, path_to_img , 0)
 
