@@ -88,7 +88,7 @@ def get_n_store(path):
         root.mainloop()
     this_os = determine_os()
     # unix or linux
-    if this_os == 'poisx':
+    if this_os == 'posix':
         switch = '/'
     elif this_os == 'mac':
         switch = '/'
@@ -101,7 +101,7 @@ def get_n_store(path):
     full_path = newpath+switch+fname
     if not os.path.isfile(full_path):
         download2(path, full_path)
-        if this_os == 'poisx':
+        if this_os == 'posix':
             set_background_raspi(full_path)
         elif this_os == 'nt':
             set_background_windows(full_path)
