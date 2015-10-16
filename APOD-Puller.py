@@ -47,7 +47,10 @@ def get_n_store(path):
         os_type = os.name
 
         if os_type == 'nt':
-            print('nt')
+            print('windows')
+        elif os_type == 'posix':
+			print('Raspberry Pi/Linux')
+        return os_type
 
     newpath = getScriptPath()+'/APOD_Pics'
     if not os.path.exists(newpath):
@@ -83,12 +86,14 @@ def get_n_store(path):
         root.after(500, root.deiconify)
         root.after(0, download_chunk)
         root.mainloop()
-
-    if determine_os() == 'linux':
+    this_os = determine_os()
+    # unix or linux
+    if this_os == 'poisx':
         switch = '/'
-    elif determine_os() == 'mac':
+    elif this_os == 'mac':
         switch = '/'
     else:
+        #windows
         switch = '\\'
     ext = path.rsplit('.',1)[-1]
     timestr = time.strftime("%Y%m%d")
@@ -96,7 +101,14 @@ def get_n_store(path):
     full_path = newpath+switch+fname
     if not os.path.isfile(full_path):
         download2(path, full_path)
-        set_background_windows(full_path)
+        if this_os == 'poisx':
+            set_background_raspi(full_path)
+        elif this_os == 'nt':
+            set_background_windows(full_path)
+        else:
+            print("unknown OS")
+		# set to windows background, edited out until i can test it.
+        # set_background_windows(full_path)
 
 def set_background_linux(path_to_img):
     print("This is where the linux commands would go.")
