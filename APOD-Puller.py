@@ -1,8 +1,14 @@
-from urllib.request import Request, urlopen, urlretrieve
+from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from bs4 import BeautifulSoup
 from tkinter import Tk, ttk
-import re, time, ctypes, os, sys, subprocess
+from time import strftime
+from re import compile
+from ctypes import windll
+from os import path, makedirs
+from subprocess import call
+from sys import argv
+from platform import system
 
 __author__ = 'kmkass'
 url = 'http://apod.nasa.gov/apod/'
@@ -28,7 +34,7 @@ def test_url(site):
 
 def find_itod(site, data):
     soup = BeautifulSoup(data, 'html.parser')
-    pattern = re.compile('^image.*\.(bmp|jpg|gif|png)$')
+    pattern = compile('^image.*\.(bmp|jpg|gif|png)$')
     for x in soup.find_all('a'):
         if pattern.search(x['href']) != None:
             path_to_img = (site + x['href'])
@@ -37,24 +43,15 @@ def find_itod(site, data):
             break
 
 
-def get_n_store(path):
+def get_n_store(img_path):
 
 
     def getScriptPath():
-        return os.path.dirname(os.path.realpath(sys.argv[0]))
-
-    def determine_os():
-        os_type = os.name
-
-        if os_type == 'nt':
-            print('windows')
-        elif os_type == 'posix':
-            print('Raspberry Pi/Linux')
-        return os_type
+        return path.dirname(path.realpath(argv[0]))
 
     newpath = getScriptPath()+'/APOD_Pics'
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
+    if not path.exists(newpath):
+        makedirs(newpath)
 
     def download2(url, filename):
         response = urlopen(url)
@@ -86,24 +83,26 @@ def get_n_store(path):
         root.after(500, root.deiconify)
         root.after(0, download_chunk)
         root.mainloop()
-    this_os = determine_os()
+
+    this_os = system()
     # unix or linux
-    if this_os == 'posix':
+    if this_os == 'Linux':
         switch = '/'
     elif this_os == 'mac':
         switch = '/'
-    else:
-        #windows
+    elif this_os == 'Windows':
         switch = '\\'
-    ext = path.rsplit('.',1)[-1]
-    timestr = time.strftime("%Y%m%d")
+    else:
+        print('unknown OS')
+    ext = img_path.rsplit('.', 1)[-1]
+    timestr = strftime("%Y%m%d")
     fname = (timestr+'.'+ext)
     full_path = newpath+switch+fname
-    if not os.path.isfile(full_path):
-        download2(path, full_path)
-        if this_os == 'posix':
+    if not path.isfile(full_path):
+        download2(img_path, full_path)
+        if this_os == 'Linux':
             set_background_raspi(full_path)
-        elif this_os == 'nt':
+        elif this_os == 'Windows':
             set_background_windows(full_path)
         else:
             print("unknown OS")
@@ -114,9 +113,9 @@ def set_background_linux(path_to_img):
     print("This is where the linux commands would go.")
 
 def set_background_raspi(path_to_img):
-    subprocess.call("pcmanfm --set-wallpaper " + path_to_img, shell=True)
+    call("pcmanfm --set-wallpaper " + path_to_img, shell=True)
 
 def set_background_windows(path_to_img):
-    ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, path_to_img , 0)
+    windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, path_to_img, 0)
 
 __init__(url)
