@@ -10,8 +10,9 @@ from platform import system
 
 from bs4 import BeautifulSoup
 
-__author__ = 'kmkass'
+__author__ = 'Kris K.'
 url = 'http://apod.nasa.gov/apod/'
+
 
 def __init__(url):
     test_url(url)
@@ -36,7 +37,7 @@ def find_itod(site, data):
     soup = BeautifulSoup(data, 'html.parser')
     pattern = compile('^image.*\.(bmp|jpg|gif|png)$')
     for x in soup.find_all('a'):
-        if pattern.search(x['href']) != None:
+        if pattern.search(x['href']) is not None:
             path_to_img = (site + x['href'])
             print(path_to_img)
             get_n_store(path_to_img)
@@ -55,28 +56,29 @@ def get_n_store(img_path):
 
     def download2(url, filename):
         response = urlopen(url)
-        totalsize = int(response.headers['Content-Length']) # assume correct header
+        totalsize = int(response.headers['Content-Length'])  # assume correct header
         outputfile = open(filename, 'wb')
 
+        # this is supposed to be a download bar, but it doesn't seem to work.
         def download_chunk(readsofar=0, chunksize=1 << 13):
             # report progress
-            percent = readsofar * 1e2 / totalsize # assume totalsize > 0
+            percent = readsofar * 1e2 / totalsize  # assume totalsize > 0
             root.title('%%%.0f %s' % (percent, filename,))
             progressbar['value'] = percent
 
             # download chunk
             data = response.read(chunksize)
-            if not data: # finished downloading
+            if not data:  # finished downloading
                 outputfile.close()
-                root.destroy() # close GUI
+                root.destroy()  # close GUI
             else:
-                outputfile.write(data) # save to filename
+                outputfile.write(data)  # save to filename
                 # schedule to download the next chunk
                 root.after(0, download_chunk, readsofar + len(data), chunksize)
 
         # setup GUI to show progress
         root = Tk()
-        root.withdraw() # hide
+        root.withdraw()  # hide
         progressbar = ttk.Progressbar(root, length=400)
         progressbar.grid()
         # show progress bar if the download takes more than .5 seconds
@@ -93,7 +95,10 @@ def get_n_store(img_path):
     elif this_os == 'Windows':
         switch = '\\'
     else:
-        print('unknown OS')
+        print('unknown OS... This probably will not work, exiting.')
+        # Set to None to prevent my IDE from whining..
+        switch = None
+        exit()
     ext = img_path.rsplit('.', 1)[-1]
     timestr = strftime("%Y%m%d")
     fname = (timestr+'.'+ext)
@@ -109,11 +114,14 @@ def get_n_store(img_path):
         # set to windows background, edited out until i can test it.
         # set_background_windows(full_path)
 
+
 def set_background_linux(path_to_img):
     print("This is where the linux commands would go.")
 
+
 def set_background_raspi(path_to_img):
     call("pcmanfm --set-wallpaper " + path_to_img, shell=True)
+
 
 def set_background_windows(path_to_img):
     from ctypes import windll
