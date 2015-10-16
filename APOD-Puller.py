@@ -1,14 +1,14 @@
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
-from bs4 import BeautifulSoup
 from tkinter import Tk, ttk
 from time import strftime
 from re import compile
-from ctypes import windll
 from os import path, makedirs
 from subprocess import call
 from sys import argv
 from platform import system
+
+from bs4 import BeautifulSoup
 
 __author__ = 'kmkass'
 url = 'http://apod.nasa.gov/apod/'
@@ -116,6 +116,7 @@ def set_background_raspi(path_to_img):
     call("pcmanfm --set-wallpaper " + path_to_img, shell=True)
 
 def set_background_windows(path_to_img):
+    from ctypes import windll
     windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, path_to_img, 0)
 
 __init__(url)
