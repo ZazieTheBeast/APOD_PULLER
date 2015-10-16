@@ -2,7 +2,7 @@ from urllib.request import Request, urlopen, urlretrieve
 from urllib.error import URLError, HTTPError
 from bs4 import BeautifulSoup
 from tkinter import Tk, ttk
-import re, time, ctypes, os, sys
+import re, time, ctypes, os, sys, subprocess
 
 __author__ = 'kmkass'
 url = 'http://apod.nasa.gov/apod/'
@@ -49,7 +49,7 @@ def get_n_store(path):
         if os_type == 'nt':
             print('windows')
         elif os_type == 'posix':
-			print('Raspberry Pi/Linux')
+            print('Raspberry Pi/Linux')
         return os_type
 
     newpath = getScriptPath()+'/APOD_Pics'
@@ -107,14 +107,14 @@ def get_n_store(path):
             set_background_windows(full_path)
         else:
             print("unknown OS")
-		# set to windows background, edited out until i can test it.
+        # set to windows background, edited out until i can test it.
         # set_background_windows(full_path)
 
 def set_background_linux(path_to_img):
     print("This is where the linux commands would go.")
 
 def set_background_raspi(path_to_img):
-    print("This is where the raspi commands would go.")
+    subprocess.call("pcmanfm --set-wallpaper " + path_to_img, shell=True)
 
 def set_background_windows(path_to_img):
     ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, path_to_img , 0)
